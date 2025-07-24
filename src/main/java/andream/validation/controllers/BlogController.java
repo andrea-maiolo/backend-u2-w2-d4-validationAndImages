@@ -23,7 +23,9 @@ public class BlogController {
     @ResponseStatus(HttpStatus.CREATED)
     public Blog addBlog(@RequestBody @Validated NewBlogDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
-            throw new ValidationException("da finire");
+            throw new ValidationException(validationResult.getFieldErrors().stream()
+                    .map(e -> e.getDefaultMessage())
+                    .toList());
         }
         return this.blogService.saveBlog(payload);
     }
@@ -44,7 +46,9 @@ public class BlogController {
     public Blog modifyBlog(@RequestBody @Validated NewBlogDTO payload, @PathVariable UUID blogId,
                            BindingResult validationResult) {
         if (validationResult.hasErrors()) {
-            throw new ValidationException("da finire");
+            throw new ValidationException(validationResult.getFieldErrors().stream()
+                    .map(e -> e.getDefaultMessage())
+                    .toList());
         }
         return this.blogService.modifyBlog(payload, blogId);
     }

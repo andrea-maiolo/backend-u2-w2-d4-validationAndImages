@@ -25,7 +25,9 @@ public class AuthorController {
     @ResponseStatus(HttpStatus.CREATED)
     public Author addAuthor(@RequestBody @Validated NewAuthorDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
-            throw new ValidationException("da finire");
+            throw new ValidationException(validationResult.getFieldErrors().stream()
+                    .map(e -> e.getDefaultMessage())
+                    .toList());
         }
         return this.authorService.saveAuthor(payload);
     }
@@ -46,7 +48,9 @@ public class AuthorController {
     public Author modifyAuthor(@RequestBody @Validated NewAuthorDTO payload, @PathVariable UUID authorId,
                                BindingResult validationResult) {
         if (validationResult.hasErrors()) {
-            throw new ValidationException("da finire");
+            throw new ValidationException(validationResult.getFieldErrors().stream()
+                    .map(e -> e.getDefaultMessage())
+                    .toList());
         }
         return this.authorService.modifyAuthor(payload, authorId);
     }

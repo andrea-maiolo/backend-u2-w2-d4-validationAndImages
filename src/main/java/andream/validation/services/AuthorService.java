@@ -1,8 +1,8 @@
 package andream.validation.services;
 
 import andream.validation.entities.Author;
+import andream.validation.exceptions.BadRequestException;
 import andream.validation.exceptions.NotFoundException;
-import andream.validation.exceptions.ValidationException;
 import andream.validation.payloads.NewAuthorDTO;
 import andream.validation.repositories.AuthorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class AuthorService {
 
     public Author saveAuthor(NewAuthorDTO payload) {
         this.authorRepo.findByEmail(payload.email()).ifPresent(a -> {
-            throw new ValidationException("user already registred");
+            throw new BadRequestException("user already registred");
         });
 
         Author authorToSave = new Author(payload.name(), payload.surname(), payload.email(),
@@ -46,7 +46,7 @@ public class AuthorService {
         Author found = getByID(authorId);
         if (!found.getEmail().equals(payload.email()))
             this.authorRepo.findByEmail(payload.email()).ifPresent(a -> {
-                throw new ValidationException("invalid email");
+                throw new BadRequestException("invalid email");
             });
         found.setName(payload.name());
         found.setSurname(payload.surname());

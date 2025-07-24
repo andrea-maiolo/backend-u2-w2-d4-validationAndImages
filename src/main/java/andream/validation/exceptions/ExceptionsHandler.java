@@ -1,5 +1,6 @@
 package andream.validation.exceptions;
 
+import andream.validation.payloads.ErrorListDTO;
 import andream.validation.payloads.ErrorPayload;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,9 +12,9 @@ import java.time.LocalDate;
 @RestControllerAdvice
 public class ExceptionsHandler {
 
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorPayload handleBadRequest(ValidationException ex) {
+    public ErrorPayload handleBadRequest(BadRequestException ex) {
         return new ErrorPayload(ex.getMessage(), LocalDate.now());
     }
 
@@ -27,5 +28,12 @@ public class ExceptionsHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorPayload handleServerError(Exception ex) {
         return new ErrorPayload((ex.getMessage()), LocalDate.now());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorListDTO handleValidationErrorList(ValidationException ex) {
+        return new ErrorListDTO(ex.getMessage(), LocalDate.now(), ex.getErrorList());
+
     }
 }
