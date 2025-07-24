@@ -3,7 +3,7 @@ package andream.validation.services;
 import andream.validation.entities.Author;
 import andream.validation.exceptions.NotFoundException;
 import andream.validation.exceptions.ValidationException;
-import andream.validation.payloads.AuthorPayload;
+import andream.validation.payloads.NewAuthorDTO;
 import andream.validation.repositories.AuthorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,13 +19,13 @@ public class AuthorService {
     @Autowired
     private AuthorRepo authorRepo;
 
-    public Author saveAuthor(AuthorPayload payload) {
-        this.authorRepo.findByEmail(payload.getEmail()).ifPresent(a -> {
+    public Author saveAuthor(NewAuthorDTO payload) {
+        this.authorRepo.findByEmail(payload.email()).ifPresent(a -> {
             throw new ValidationException("user already registred");
         });
 
-        Author authorToSave = new Author(payload.getName(), payload.getSurname(), payload.getEmail(),
-                ("https://ui-avatars.com/api/?name=" + payload.getName() + "+" + payload.getSurname()), payload.getDob());
+        Author authorToSave = new Author(payload.name(), payload.surname(), payload.email(),
+                ("https://ui-avatars.com/api/?name=" + payload.name() + "+" + payload.surname()), payload.dob());
         authorRepo.save(authorToSave);
         return authorToSave;
     }
@@ -42,16 +42,16 @@ public class AuthorService {
         ));
     }
 
-    public Author modifyAuthor(AuthorPayload payload, UUID authorId) {
+    public Author modifyAuthor(NewAuthorDTO payload, UUID authorId) {
         Author found = getByID(authorId);
-        if (!found.getEmail().equals(payload.getEmail()))
-            this.authorRepo.findByEmail(payload.getEmail()).ifPresent(a -> {
+        if (!found.getEmail().equals(payload.email()))
+            this.authorRepo.findByEmail(payload.email()).ifPresent(a -> {
                 throw new ValidationException("invalid email");
             });
-        found.setName(payload.getName());
-        found.setSurname(payload.getSurname());
-        found.setEmail(payload.getEmail());
-        found.setDob(payload.getDob());
+        found.setName(payload.name());
+        found.setSurname(payload.surname());
+        found.setEmail(payload.email());
+        found.setDob(payload.dob());
         return found;
     }
 

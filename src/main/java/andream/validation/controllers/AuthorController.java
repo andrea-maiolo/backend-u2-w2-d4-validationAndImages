@@ -2,11 +2,14 @@ package andream.validation.controllers;
 
 
 import andream.validation.entities.Author;
-import andream.validation.payloads.AuthorPayload;
+import andream.validation.exceptions.ValidationException;
+import andream.validation.payloads.NewAuthorDTO;
 import andream.validation.services.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -20,7 +23,10 @@ public class AuthorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Author addAuthor(@RequestBody AuthorPayload payload) {
+    public Author addAuthor(@RequestBody @Validated NewAuthorDTO payload, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            throw new ValidationException("da finire");
+        }
         return this.authorService.saveAuthor(payload);
     }
 
@@ -37,7 +43,11 @@ public class AuthorController {
     }
 
     @PutMapping("/{authorId}")
-    public Author modifyAuthor(@RequestBody AuthorPayload payload, @PathVariable UUID authorId) {
+    public Author modifyAuthor(@RequestBody @Validated NewAuthorDTO payload, @PathVariable UUID authorId,
+                               BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            throw new ValidationException("da finire");
+        }
         return this.authorService.modifyAuthor(payload, authorId);
     }
 

@@ -3,7 +3,7 @@ package andream.validation.services;
 import andream.validation.entities.Author;
 import andream.validation.entities.Blog;
 import andream.validation.exceptions.NotFoundException;
-import andream.validation.payloads.BlogPayload;
+import andream.validation.payloads.NewBlogDTO;
 import andream.validation.repositories.BlogRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,9 +22,9 @@ public class BlogService {
     @Autowired
     private AuthorService authorService;
 
-    public Blog saveBlog(BlogPayload payloadb) {
-        Author blogAuthor = this.authorService.getByID(payloadb.getAuthorId());
-        Blog blogToSave = new Blog(payloadb.getCategory(), payloadb.getTitle(), payloadb.getContent(),
+    public Blog saveBlog(NewBlogDTO payloadb) {
+        Author blogAuthor = this.authorService.getByID(payloadb.authorId());
+        Blog blogToSave = new Blog(payloadb.category(), payloadb.title(), payloadb.content(),
                 "https://picsum.photos/200/300", blogAuthor);
         this.blogRepo.save(blogToSave);
         return blogToSave;
@@ -44,11 +44,11 @@ public class BlogService {
 
     }
 
-    public Blog modifyBlog(BlogPayload payload, UUID blogId) {
+    public Blog modifyBlog(NewBlogDTO payload, UUID blogId) {
         Blog found = this.findBlogById(blogId);
-        found.setCategory(payload.getCategory());
-        found.setTitle(payload.getTitle());
-        found.setContent(payload.getContent());
+        found.setCategory(payload.category());
+        found.setTitle(payload.title());
+        found.setContent(payload.content());
         return found;
     }
 
