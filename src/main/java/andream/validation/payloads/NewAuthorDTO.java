@@ -1,9 +1,6 @@
 package andream.validation.payloads;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -17,7 +14,7 @@ public record NewAuthorDTO(
         @NotEmpty(message = "email is required")
         @Email(message = "email is in the wrong format")
         String email,
-        @NotEmpty(message = "dob is required")
+        @NotNull(message = "dob is required")
         @Past
         LocalDate dob
 ) {
