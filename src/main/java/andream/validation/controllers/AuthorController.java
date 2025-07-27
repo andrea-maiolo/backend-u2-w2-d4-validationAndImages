@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ public class AuthorController {
 
     @Autowired
     private AuthorService authorService;
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -59,5 +61,13 @@ public class AuthorController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAuthor(@PathVariable UUID authorId) {
         this.authorService.deleteAuthor(authorId);
+    }
+
+
+    @PatchMapping("/{authorId}/avatar")
+    public String uploadImage(@RequestParam("avatar") MultipartFile file, @PathVariable UUID authorId) {
+        System.out.println(file.getOriginalFilename());
+        System.out.println(file.getSize());
+        return this.authorService.uploadAvatar(file, authorId);
     }
 }

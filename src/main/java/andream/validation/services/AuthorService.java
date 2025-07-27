@@ -5,19 +5,27 @@ import andream.validation.exceptions.BadRequestException;
 import andream.validation.exceptions.NotFoundException;
 import andream.validation.payloads.NewAuthorDTO;
 import andream.validation.repositories.AuthorRepo;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.UUID;
+
 
 @Service
 public class AuthorService {
     @Autowired
     private AuthorRepo authorRepo;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     public Author saveAuthor(NewAuthorDTO payload) {
         this.authorRepo.findByEmail(payload.email()).ifPresent(a -> {
@@ -59,5 +67,19 @@ public class AuthorService {
         Author found = getByID(authorId);
         this.authorRepo.delete(found);
     }
+
+    public String uploadAvatar(MultipartFile file, UUID authorId) {
+        Author found = getByID(authorId);
+        try {
+            Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageUrl = (String) result.get("url");
+            found.setAvatar(imageUrl);
+            this.authorRepo.save(found);
+            return imageUrl;
+        } catch (Exception ex) {
+            throw new BadRequestException("image not saved");
+        }
+    }
+
 }
 
